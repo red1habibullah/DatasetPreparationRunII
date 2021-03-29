@@ -39,9 +39,9 @@ label3.SetTextSize(0.03)
 inputDir='/eos/uscms/store/user/zfwd666/2017/bkgEffCheck/TauMuTauE/'
 outputDirData='/eos/uscms/store/user/rhabibul/HtoAA/HtoAA2017Deep/TauMuTauE/RooDatasets/Data/'
 outputDirDataDriven='/eos/uscms/store/user/rhabibul/HtoAA/HtoAA2017Deep/TauMuTauE/RooDatasets/DataDriven/'
-inputFakeEleFile = ROOT.TFile("../data/fakeTauEff_TauETauE.root")
+inputFakeEleFile = ROOT.TFile("../data/fakeTauEff_JetToEle.root")
 
-inputFakeMuFile = ROOT.TFile("../data/fakeTauEff_TauMuTauMu.root")
+inputFakeMuFile = ROOT.TFile("../data/fakeTauEff_JetToMu.root")
 
 for j,imuid in enumerate(muIdList):
 
@@ -95,15 +95,15 @@ for j,imuid in enumerate(muIdList):
 
             
             if "invMassMuMu" in histKey:
-                globals()["data3P1F1Hist" + str(j) + str(k)] = ROOT.TH1D(histKey + "3P1F1",histKey+"3P1F1", 10, 0, 60)
-                globals()["data3P1F1HistOnly" + str(j) + str(k)] = ROOT.TH1D(histKey+"3P1F1Only",histKey + "3P1F1Only", 10, 0, 60)
-                globals()["data3P1F2Hist" + str(j) + str(k)] = ROOT.TH1D(histKey+"3P1F2", histKey+"3P1F2", 10, 0, 60)
-                globals()["data2P2FHistOnly" + str(j) + str(k)] = ROOT.TH1D(histKey+"2P2FOnly",histKey+ "2P2FOnly", 10, 0, 60)
-                globals()["data2P2FHist" + str(j) + str(k)] = ROOT.TH1D(histKey+"2P2F",histKey+"2P2F", 10, 0, 60)
-                globals()["data2P2FextHist" + str(j) + str(k)] = ROOT.TH1D(histKey+"2P2Fext",histKey+"2P2Fext", 10, 0, 60)
-                globals()["zz3P1F1Hist" + str(j) + str(k)] = ROOT.TH1D(histKey+"zz3P1F1",histKey+"zz3P1F1", 10, 0, 60)
-                globals()["zz3P1F2Hist" + str(j) + str(k)] = ROOT.TH1D(histKey + "zz3P1F2",histKey+"zz3P1F2", 10, 0, 60)
-                globals()["zz4PHist" + str(j) + str(k)] = ROOT.TH1D(histKey+"zz4P",histKey+"zz4P", 10, 0, 60)
+                globals()["data3P1F1Hist" + str(j) + str(k)] = ROOT.TH1D(histKey + "3P1F1",histKey+"3P1F1", 30, 0, 60)
+                globals()["data3P1F1HistOnly" + str(j) + str(k)] = ROOT.TH1D(histKey+"3P1F1Only",histKey + "3P1F1Only", 30, 0, 60)
+                globals()["data3P1F2Hist" + str(j) + str(k)] = ROOT.TH1D(histKey+"3P1F2", histKey+"3P1F2", 30, 0, 60)
+                globals()["data2P2FHistOnly" + str(j) + str(k)] = ROOT.TH1D(histKey+"2P2FOnly",histKey+ "2P2FOnly", 30, 0, 60)
+                globals()["data2P2FHist" + str(j) + str(k)] = ROOT.TH1D(histKey+"2P2F",histKey+"2P2F", 30, 0, 60)
+                globals()["data2P2FextHist" + str(j) + str(k)] = ROOT.TH1D(histKey+"2P2Fext",histKey+"2P2Fext", 30, 0, 60)
+                globals()["zz3P1F1Hist" + str(j) + str(k)] = ROOT.TH1D(histKey+"zz3P1F1",histKey+"zz3P1F1", 30, 0, 60)
+                globals()["zz3P1F2Hist" + str(j) + str(k)] = ROOT.TH1D(histKey + "zz3P1F2",histKey+"zz3P1F2", 30, 0, 60)
+                globals()["zz4PHist" + str(j) + str(k)] = ROOT.TH1D(histKey+"zz4P",histKey+"zz4P", 30, 0, 60)
                 #####################
 
 

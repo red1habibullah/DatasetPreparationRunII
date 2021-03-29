@@ -28,7 +28,7 @@ for i,ifile in enumerate(mlDisc):
     fakeRateEfficiency = ROOT.RooRealVar("fakeRateEfficiency", "fakeRateEfficiency", 0, 1)
     
     dataColl = ROOT.RooDataSet("dataColl", "dataColl", ROOT.RooArgSet(invMassMuMu, visDiTauMass, visFourbodyMass, fakeRateEfficiency))
-    plotname= "DiTauIso=" + ifile
+    plotname= "DeepDiTauDCM=" + ifile
     print plotname
     for event in treein:
         finFakeEff = ROOT.TFile(fakeDir+"fakeTauEff_TauHadTauHad.root")
