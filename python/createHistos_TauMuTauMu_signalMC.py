@@ -6,7 +6,7 @@ import array
 
 
 baseDir="/afs/cern.ch/work/r/rhabibul/FlatTreeProductionRunII/CMSSW_10_6_24/src/MuMuTauTauAnalyzer/flattrees/signalMC/"
-outDir="/eos/cms/store/user/rhabibul/BoostedRooDatasets/TauMuTauE/"
+outDir="/eos/cms/store/user/rhabibul/BoostedRooDatasets/TauMuTauMu/"
 
 
 #path = [signalDir, sidebandDir1, sidebandDir2]
@@ -58,20 +58,20 @@ for y in years:
         for ia,a in enumerate(hamap[h]):
             for ir,r in enumerate(regions):
                 for m in MuonIso:
-                    for e in EleId:
+                    for m2 in MuonIso:
                         fname= baseDir+y+"/Histogram/"+h+"/"+a+"/HAA_MC_"+h+"_"+a+"_"+y+"_tmth_teth_MVAMedium_"+r+"_tree.root"
                         globals()["fin" + h+a+r]=ROOT.TFile(fname)
-                        globals()["treein" + h+a+r]=globals()["fin" +h+a+r].Get("TreeMuEle")
+                        globals()["treein" + h+a+r]=globals()["fin" +h+a+r].Get("Tree2Mu")
                         globals()["hist" + h+a+r]=ROOT.TH1D("invMassMuMu","invMassMuMu",600,0,60)
                         globals()["2Dhist" + h+a+r] = ROOT.TH2D("invMassMuMuVisMassMuMuTauTau","InvMassMuMuVisMassMuMuTauTau",600,0,60, 500, 0, 1000)
                         
                         
                         for event in globals()["treein" + h +a+r]:
-                            globals()["hist" + h+a+r].Fill(event.invMassMu1Mu2_me, event.eventWeight_me*scale*lumi_map[y]*hXsecmap[h])
-                            globals()["2Dhist" + h+a+r].Fill(event.invMassMu1Mu2_me, event.visMass3MuEle_me, event.eventWeight_me*scale*lumi_map[y]*hXsecmap[h])  
+                            globals()["hist" + h+a+r].Fill(event.invMassMu1Mu2_mm, event.eventWeight_mm*scale*lumi_map[y]*hXsecmap[h])
+                            globals()["2Dhist" + h+a+r].Fill(event.invMassMu1Mu2_mm, event.visMass4Mu_mm, event.eventWeight_mm*scale*lumi_map[y]*hXsecmap[h])  
                            
-                        print outDir+y+"/SignalMC/"+"Haa_MC_"+h+"_"+a+"_"+"TauMuTauE"+"_"+y+"_"+m+"_"+e+"_"+r+"_"+"nominal.root"
-                        globals()["fout"+ h+a+r]=ROOT.TFile(outDir+y+"/SignalMC/"+"Haa_MC_"+h+"_"+a+"_"+"TauMuTauE"+"_"+y+"_"+m+"_"+e+"_"+r+"_"+"nominal.root","RECREATE")
+                        print outDir+y+"/SignalMC/"+"Haa_MC_"+h+"_"+a+"_"+"TauMuTauE"+"_"+y+"_"+m+"_"+m2+"_"+r+"_"+"nominal.root"
+                        globals()["fout"+ h+a+r]=ROOT.TFile(outDir+y+"/SignalMC/"+"Haa_MC_"+h+"_"+a+"_"+"TauMuTauMu"+"_"+y+"_"+m+"_"+m2+"_"+r+"_"+"nominal.root","RECREATE")
                         globals()["fout"+ h+a+r].cd()
                         globals()["hist"+ h+a+r].Write()
                         globals()["2Dhist"+ h+a+r].Write()

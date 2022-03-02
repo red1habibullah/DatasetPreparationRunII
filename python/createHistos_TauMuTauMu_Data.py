@@ -18,8 +18,8 @@ eleIdLabel = ["tightEleId"]
 years=["2016","2017","2018"]
 
 #histList = ["deltaRTauTau", "Tau1Pt", "Tau2Pt", "invMassMuMu", "visMassMuMuTauTau"]
-histKey ="invMassMu1Mu2_me"
-histKey2D="invMassMu1Mu2_mevisMass3MuEle_me"
+histKey ="invMassMu1Mu2_mm"
+histKey2D="invMassMu1Mu2_mmvisMass4Mu_mm"
 histLabel = ["#DeltaR(#mu_{3}e)", "p_{T}(#mu_{3})[GeV]", "p_{T}(e)[GeV]", "M(#mu_{1}#mu_{2})[GeV]", "M(3#mue)[GeV]"]
 binning = array.array('d', [3, 10, 20, 30, 50, 100, 200])
 
@@ -40,7 +40,7 @@ label3.SetTextFont(52)
 label3.SetTextSize(0.03)
 
 baseDir='/afs/cern.ch/work/r/rhabibul/FlatTreeProductionRunII/CMSSW_10_6_24/src/MuMuTauTauAnalyzer/flattrees/dataSideband/'
-outputDir='/eos/cms/store/user/rhabibul/BoostedRooDatasets/TauMuTauE/'
+outputDir='/eos/cms/store/user/rhabibul/BoostedRooDatasets/TauMuTauMu/'
 fakebaseDir='/afs/cern.ch/user/r/rhabibul/DatasetPrepRunII_Boosted/CMSSW_10_2_13/src/DatasetPreparationRunII/data/'
 
 #inputFakeEleFile = ROOT.TFile(fakebaseDir+"fakeTauEff_TauETauE.root")
@@ -53,22 +53,22 @@ for j,imuid in enumerate(muIdList):
     for k,ieleid in enumerate(eleIdList):
         
         for iy,y in enumerate(years):
-            inputFakeEleFile = ROOT.TFile(fakebaseDir+y+"/"+"fakeTauEff_TauETauE.root")
-            inputFakeMuFile = ROOT.TFile(fakebaseDir+y+"/"+"fakeTauEff_TauMuTauMu.root")
+            inputFakeMu4File = ROOT.TFile(fakebaseDir+y+"/"+"fakeTauEff_TauMuTauMu.root")
+            inputFakeMu3File = ROOT.TFile(fakebaseDir+y+"/"+"fakeTauEff_TauMuTauMu.root")
 
             globals()["data3P1F1File" + str(j) + str(k) +str(iy)] = ROOT.TFile(baseDir+y+"/Histogram/"+"All_"+y+"_sideBand_nominal.root")
             globals()["data3P1F2File" + str(j) + str(k)+str(iy)] = ROOT.TFile(baseDir+y+"/Histogram/"+"All_"+y+"_sideBand1_nominal.root")
             globals()["data2P2FFile" + str(j) + str(k)+str(iy)] = ROOT.TFile(baseDir+y+"/Histogram/"+"All_"+y+"_sideBand2_nominal.root")
             
-            globals()["data3P1F1Tree" + str(j) + str(k)+ str(iy)] = globals()["data3P1F1File" + str(j) + str(k)+str(iy)].Get("TreeMuEle")
-            globals()["data3P1F2Tree" + str(j) + str(k)+str(iy)] = globals()["data3P1F2File" + str(j) + str(k)+str(iy)].Get("TreeMuEle")
-            globals()["data2P2FTree" + str(j) + str(k)+str(iy)] = globals()["data2P2FFile" + str(j) + str(k) +str(iy)].Get("TreeMuEle")
+            globals()["data3P1F1Tree" + str(j) + str(k)+ str(iy)] = globals()["data3P1F1File" + str(j) + str(k)+str(iy)].Get("Tree2Mu")
+            globals()["data3P1F2Tree" + str(j) + str(k)+str(iy)] = globals()["data3P1F2File" + str(j) + str(k)+str(iy)].Get("Tree2Mu")
+            globals()["data2P2FTree" + str(j) + str(k)+str(iy)] = globals()["data2P2FFile" + str(j) + str(k) +str(iy)].Get("Tree2Mu")
 
             
-            
 
-            histFakeMuEff = inputFakeMuFile.Get(muIdLabel[j])
-            histFakeEleEff = inputFakeEleFile.Get(eleIdLabel[k])
+
+            histFakeMu4Eff = inputFakeMu4File.Get(muIdLabel[j])
+            histFakeMu3Eff = inputFakeMu3File.Get(muIdLabel[k])
 
             #Final Extrapolated DataHist in Signal Region
             globals()["data3P1F1Hist" + str(j) + str(k)+str(iy)] = ROOT.TH1D()
@@ -109,7 +109,7 @@ for j,imuid in enumerate(muIdList):
 
             
             
-            if "invMassMu1Mu2_me" in histKey:
+            if "invMassMu1Mu2_mm" in histKey:
                 globals()["data3P1F1Hist" + str(j) + str(k) +str(iy)] = ROOT.TH1D("invMassMuMu" + "3P1F1","invMassMuMu"+"3P1F1", nbins, 0, 60)
                 globals()["data3P1F1HistOnly" + str(j) + str(k)+str(iy)] = ROOT.TH1D("invMassMuMu"+"3P1F1Only","invMassMuMu" + "3P1F1Only", nbins, 0, 60)
                 globals()["data3P1F2Hist" + str(j) + str(k)+str(iy)] = ROOT.TH1D("invMassMuMu"+"3P1F2", "invMassMuMu"+"3P1F2", nbins, 0, 60)
@@ -119,7 +119,7 @@ for j,imuid in enumerate(muIdList):
                 
                 #####################
 
-            if "invMassMu1Mu2_mevisMass3MuEle_me" in histKey2D:
+            if "invMassMu1Mu2_mmvisMass4Mu_mm" in histKey2D:
                 globals()["2Ddata3P1F1Hist" + str(j) + str(k) +str(iy)] = ROOT.TH2D("invMassMuMuVisMassMuMuTauTau" + "3P1F1","invMassMuMuVisMassMuMuTauTau"+"3P1F1", nbins, 0, 60,nbinsy,0,1000)
                 globals()["2Ddata3P1F1HistOnly" + str(j) + str(k)+str(iy)] = ROOT.TH2D("invMassMuMuVisMassMuMuTauTau"+"3P1F1Only","invMassMuMuVisMassMuMuTauTau" + "3P1F1Only", nbins, 0, 60,nbinsy,0,1000)
                 globals()["2Ddata3P1F2Hist" + str(j) + str(k)+str(iy)] = ROOT.TH2D("invMassMuMuVisMassMuMuTauTau"+"3P1F2", "invMassMuMuVisMassMuMuTauTau"+"3P1F2", nbins, 0, 60,nbinsy,0,1000)
@@ -131,35 +131,36 @@ for j,imuid in enumerate(muIdList):
             for event in globals()["data3P1F1Tree" + str(j) + str(k)+str(iy)]:
                 
                 fakeEff = 1.0
-                nbins = histFakeEleEff.GetNbinsX()
+                nbins = histFakeMu4Eff.GetNbinsX()
                 for ibin in xrange(nbins):
-                    binlowEdge = histFakeEleEff.GetXaxis().GetBinLowEdge(ibin+1)
-                    binhighEdge = histFakeEleEff.GetXaxis().GetBinLowEdge(ibin+1) + histFakeEleEff.GetXaxis().GetBinWidth(ibin+1)
-                    if (event.elePt_me >= binlowEdge and event.elePt_me < binhighEdge):
-                        fakeEff = histFakeEleEff.GetBinContent(ibin+1)/(1.0-histFakeEleEff.GetBinContent(ibin+1))
-                globals()["data3P1F1Hist" + str(j) + str(k)+str(iy)].Fill(event.invMassMu1Mu2_me, fakeEff)
-                globals()["2Ddata3P1F1Hist" + str(j) + str(k)+str(iy)].Fill(event.invMassMu1Mu2_me, event.visMass3MuEle_me, fakeEff)
+                    binlowEdge = histFakeMu4Eff.GetXaxis().GetBinLowEdge(ibin+1)
+                    binhighEdge = histFakeMu4Eff.GetXaxis().GetBinLowEdge(ibin+1) + histFakeMu4Eff.GetXaxis().GetBinWidth(ibin+1)
+                    if (event.mu4Pt_mm >= binlowEdge and event.mu4Pt_mm < binhighEdge):
+                        fakeEff = histFakeMu4Eff.GetBinContent(ibin+1)/(1.0-histFakeMu4Eff.GetBinContent(ibin+1))
+                globals()["data3P1F1Hist" + str(j) + str(k)+str(iy)].Fill(event.invMassMu1Mu2_mm, fakeEff)
+                #print "before"
+                globals()["2Ddata3P1F1Hist" + str(j) + str(k)+str(iy)].Fill(event.invMassMu1Mu2_mm, event.visMass4Mu_mm, fakeEff)
                 
 
             for event in globals()["data3P1F2Tree" + str(j) + str(k)+str(iy)]:
 
                 fakeEff = 1.0
-                nbins = histFakeMuEff.GetNbinsX()
+                nbins = histFakeMu3Eff.GetNbinsX()
                 for ibin in xrange(nbins):
-                    binlowEdge = histFakeMuEff.GetXaxis().GetBinLowEdge(ibin+1)
-                    binhighEdge = histFakeMuEff.GetXaxis().GetBinLowEdge(ibin+1) + histFakeMuEff.GetXaxis().GetBinWidth(ibin+1)
-                    if (event.mu3Pt_me >= binlowEdge and event.mu3Pt_me < binhighEdge):
-                        fakeEff = histFakeMuEff.GetBinContent(ibin+1)/(1.0-histFakeMuEff.GetBinContent(ibin+1))
+                    binlowEdge = histFakeMu3Eff.GetXaxis().GetBinLowEdge(ibin+1)
+                    binhighEdge = histFakeMu3Eff.GetXaxis().GetBinLowEdge(ibin+1) + histFakeMu3Eff.GetXaxis().GetBinWidth(ibin+1)
+                    if (event.mu3Pt_mm >= binlowEdge and event.mu3Pt_mm < binhighEdge):
+                        fakeEff = histFakeMu3Eff.GetBinContent(ibin+1)/(1.0-histFakeMu3Eff.GetBinContent(ibin+1))
 
                     
-                globals()["data3P1F2Hist" + str(j) + str(k)+str(iy)].Fill(event.invMassMu1Mu2_me, fakeEff)
-                globals()["2Ddata3P1F2Hist" + str(j) + str(k)+str(iy)].Fill(event.invMassMu1Mu2_me, event.visMass3MuEle_me, fakeEff)
+                globals()["data3P1F2Hist" + str(j) + str(k)+str(iy)].Fill(event.invMassMu1Mu2_mm, fakeEff)
+                globals()["2Ddata3P1F2Hist" + str(j) + str(k)+str(iy)].Fill(event.invMassMu1Mu2_mm, event.visMass4Mu_mm, fakeEff)
                     
                 
                 
             for event in globals()["data2P2FTree" + str(j) + str(k)+str(iy)]:
-                globals()["data2P2FHistOnly" + str(j) + str(k)+str(iy)].Fill(event.invMassMu1Mu2_me)
-                globals()["2Ddata2P2FHistOnly" + str(j) + str(k)+str(iy)].Fill(event.invMassMu1Mu2_me,event.visMass3MuEle_me)
+                globals()["data2P2FHistOnly" + str(j) + str(k)+str(iy)].Fill(event.invMassMu1Mu2_mm)
+                globals()["2Ddata2P2FHistOnly" + str(j) + str(k)+str(iy)].Fill(event.invMassMu1Mu2_mm,event.visMass4Mu_mm)
             
             
 
@@ -169,54 +170,54 @@ for j,imuid in enumerate(muIdList):
                 fakeEff1 = 0.5
                 fakeEff2 = 0.5
                 fakeEff = 1.0
-                nbinsMu = histFakeMuEff.GetNbinsX()
-                nbinsEle = histFakeEleEff.GetNbinsX()
+                nbinsMu3 = histFakeMu3Eff.GetNbinsX()
+                nbinsMu4 = histFakeMu4Eff.GetNbinsX()
 
-                for ibin in xrange(nbinsMu):
-                    binlowEdge = histFakeMuEff.GetXaxis().GetBinLowEdge(ibin+1)
-                    binhighEdge = histFakeMuEff.GetXaxis().GetBinLowEdge(ibin+1) + histFakeMuEff.GetXaxis().GetBinWidth(ibin+1)
-                    if (event.mu3Pt_me >= binlowEdge and event.mu3Pt_me < binhighEdge):
-                        fakeEff1 = histFakeMuEff.GetBinContent(ibin+1)/(1.0-histFakeMuEff.GetBinContent(ibin+1))
+                for ibin in xrange(nbinsMu3):
+                    binlowEdge = histFakeMu3Eff.GetXaxis().GetBinLowEdge(ibin+1)
+                    binhighEdge = histFakeMu3Eff.GetXaxis().GetBinLowEdge(ibin+1) + histFakeMu3Eff.GetXaxis().GetBinWidth(ibin+1)
+                    if (event.mu3Pt_mm >= binlowEdge and event.mu3Pt_mm < binhighEdge):
+                        fakeEff1 = histFakeMu3Eff.GetBinContent(ibin+1)/(1.0-histFakeMu3Eff.GetBinContent(ibin+1))
 
-                for ibin in xrange(nbinsEle):
-                    binlowEdge = histFakeEleEff.GetXaxis().GetBinLowEdge(ibin+1)
-                    binhighEdge = histFakeEleEff.GetXaxis().GetBinLowEdge(ibin+1) + histFakeEleEff.GetXaxis().GetBinWidth(ibin+1)
-                    if (event.elePt_me >= binlowEdge and event.elePt_me < binhighEdge):
-                        fakeEff2 = histFakeEleEff.GetBinContent(ibin+1)/(1.0-histFakeEleEff.GetBinContent(ibin+1))
-                        fakeEff = histFakeEleEff.GetBinContent(ibin+1)/(1.0-histFakeEleEff.GetBinContent(ibin+1))
+                for ibin in xrange(nbinsMu4):
+                    binlowEdge = histFakeMu4Eff.GetXaxis().GetBinLowEdge(ibin+1)
+                    binhighEdge = histFakeMu4Eff.GetXaxis().GetBinLowEdge(ibin+1) + histFakeMu4Eff.GetXaxis().GetBinWidth(ibin+1)
+                    if (event.mu4Pt_mm >= binlowEdge and event.mu4Pt_mm < binhighEdge):
+                        fakeEff2 = histFakeMu4Eff.GetBinContent(ibin+1)/(1.0-histFakeMu4Eff.GetBinContent(ibin+1))
+                        fakeEff = histFakeMu4Eff.GetBinContent(ibin+1)/(1.0-histFakeMu4Eff.GetBinContent(ibin+1))
 
 
             
-                globals()["data2P2FHist" + str(j) + str(k)+str(iy)].Fill(event.invMassMu1Mu2_me, (fakeEff1 + fakeEff2)*fakeEff)
-                globals()["data3P1F1HistOnly" + str(j) + str(k)+str(iy)].Fill(event.invMassMu1Mu2_me,(fakeEff1+fakeEff2))  
+                globals()["data2P2FHist" + str(j) + str(k)+str(iy)].Fill(event.invMassMu1Mu2_mm, (fakeEff1 + fakeEff2)*fakeEff)
+                globals()["data3P1F1HistOnly" + str(j) + str(k)+str(iy)].Fill(event.invMassMu1Mu2_mm,(fakeEff1+fakeEff2))  
                 
-                globals()["2Ddata2P2FHist" + str(j) + str(k)+str(iy)].Fill(event.invMassMu1Mu2_me, event.visMass3MuEle_me,(fakeEff1 + fakeEff2)*fakeEff)
+                globals()["2Ddata2P2FHist" + str(j) + str(k)+str(iy)].Fill(event.invMassMu1Mu2_mm, event.visMass4Mu_mm,(fakeEff1 + fakeEff2)*fakeEff)
                 
-                globals()["2Ddata3P1F1HistOnly" + str(j) + str(k)+str(iy)].Fill(event.invMassMu1Mu2_me, event.visMass3MuEle_me,(fakeEff1+fakeEff2))
+                globals()["2Ddata3P1F1HistOnly" + str(j) + str(k)+str(iy)].Fill(event.invMassMu1Mu2_mm, event.visMass4Mu_mm,(fakeEff1+fakeEff2))
 
                 
             for event in globals()["data2P2FTree" + str(j) + str(k)+str(iy)]:
 
                 fakeEff1 = 1.0
                 fakeEff2 = 1.0
-                nbinsMu = histFakeMuEff.GetNbinsX()
-                nbinsEle = histFakeEleEff.GetNbinsX()
+                nbinsMu3 = histFakeMu3Eff.GetNbinsX()
+                nbinsMu4 = histFakeMu4Eff.GetNbinsX()
 
-                for ibin in xrange(nbinsMu):
-                    binlowEdge = histFakeMuEff.GetXaxis().GetBinLowEdge(ibin+1)
-                    binhighEdge = histFakeMuEff.GetXaxis().GetBinLowEdge(ibin+1) + histFakeMuEff.GetXaxis().GetBinWidth(ibin+1)
-                    if (event.mu3Pt_me >= binlowEdge and event.mu3Pt_me < binhighEdge):
-                        fakeEff1 = histFakeMuEff.GetBinContent(ibin+1)/(1.0-histFakeMuEff.GetBinContent(ibin+1))
+                for ibin in xrange(nbinsMu3):
+                    binlowEdge = histFakeMu3Eff.GetXaxis().GetBinLowEdge(ibin+1)
+                    binhighEdge = histFakeMu3Eff.GetXaxis().GetBinLowEdge(ibin+1) + histFakeMu3Eff.GetXaxis().GetBinWidth(ibin+1)
+                    if (event.mu3Pt_mm >= binlowEdge and event.mu3Pt_mm < binhighEdge):
+                        fakeEff1 = histFakeMu3Eff.GetBinContent(ibin+1)/(1.0-histFakeMu3Eff.GetBinContent(ibin+1))
 
-                for ibin in xrange(nbinsEle):
-                    binlowEdge = histFakeEleEff.GetXaxis().GetBinLowEdge(ibin+1)
-                    binhighEdge = histFakeEleEff.GetXaxis().GetBinLowEdge(ibin+1) + histFakeEleEff.GetXaxis().GetBinWidth(ibin+1)
-                    if (event.elePt_me >= binlowEdge and event.elePt_me < binhighEdge):
-                        fakeEff2 = histFakeEleEff.GetBinContent(ibin+1)/(1.0-histFakeEleEff.GetBinContent(ibin+1))
+                for ibin in xrange(nbinsMu4):
+                    binlowEdge = histFakeMu4Eff.GetXaxis().GetBinLowEdge(ibin+1)
+                    binhighEdge = histFakeMu4Eff.GetXaxis().GetBinLowEdge(ibin+1) + histFakeMu4Eff.GetXaxis().GetBinWidth(ibin+1)
+                    if (event.mu4Pt_mm >= binlowEdge and event.mu4Pt_mm < binhighEdge):
+                        fakeEff2 = histFakeMu4Eff.GetBinContent(ibin+1)/(1.0-histFakeMu4Eff.GetBinContent(ibin+1))
                 
             
-                globals()["data2P2FextHist" + str(j) + str(k) +str(iy)].Fill(event.invMassMu1Mu2_me, fakeEff1*fakeEff2)
-                globals()["2Ddata2P2FextHist" + str(j) + str(k) +str(iy)].Fill(event.invMassMu1Mu2_me,event.visMass3MuEle_me,fakeEff1*fakeEff2)
+                globals()["data2P2FextHist" + str(j) + str(k) +str(iy)].Fill(event.invMassMu1Mu2_mm, fakeEff1*fakeEff2)
+                globals()["2Ddata2P2FextHist" + str(j) + str(k) +str(iy)].Fill(event.invMassMu1Mu2_mm,event.visMass4Mu_mm,fakeEff1*fakeEff2)
                 
             
 
@@ -259,8 +260,8 @@ for j,imuid in enumerate(muIdList):
 
 
 
-            globals()["fout1" + str(j) + str(k)+str(iy) ] = ROOT.TFile(outputDir+y+"/"+"DataDriven/"+"TauMuTauE_" +y+"_"+muIdLabel[j]+"_"+eleIdLabel[k]+"_"+ "sideBand" +"_"+"nominal"+ ".root", "RECREATE")
-            globals()["fout2" + str(j) + str(k)+str(iy) ] = ROOT.TFile(outputDir+y+"/"+"DataDriven/"+"TauMuTauE_" +y+"_"+muIdLabel[j]+"_"+eleIdLabel[k]+"_"+ "siginalRegion" +"_"+"nominal"+ ".root", "RECREATE")
+            globals()["fout1" + str(j) + str(k)+str(iy) ] = ROOT.TFile(outputDir+y+"/"+"DataDriven/"+"TauMuTauMu_" +y+"_"+muIdLabel[j]+"_"+muIdLabel[k]+"_"+ "sideBand" +"_"+"nominal"+ ".root", "RECREATE")
+            globals()["fout2" + str(j) + str(k)+str(iy) ] = ROOT.TFile(outputDir+y+"/"+"DataDriven/"+"TauMuTauMu_" +y+"_"+muIdLabel[j]+"_"+muIdLabel[k]+"_"+ "siginalRegion" +"_"+"nominal"+ ".root", "RECREATE")
             
 
             globals()["fout1" + str(j) + str(k) +str(iy)].cd()
