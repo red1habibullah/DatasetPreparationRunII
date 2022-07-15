@@ -11,7 +11,9 @@ higgs_BSM_xsec=0.0363647
 
 
 
-years=["2016","2017","2018"]
+#years=["2016","2017","2018"]
+
+years=["2016"] #,"2017","2018"]
 
 lumi_map={"2017":41.529*1000,
           "2016":35.92*1000,
@@ -28,14 +30,27 @@ hXsecmap={"hm125":48.58,
 }
 
 
-mh=["hm125","hm250","hm500","hm750","hm1000"]
+#mh=["hm125","hm250","hm500","hm750","hm1000"]
+
+mh=["hm125"]
+
+
+# hamap ={
+#     "hm125":["am3p6","am5","am6","am7","am8","am9","am10","am11","am12","am13","am14","am15","am16","am17","am18","am19","am20","am21"], #am4 missing in 2018 so left out for now
+#     "hm250":["am5","am10","am15","am20"],
+#     "hm500":["am5","am10","am15","am20"],
+#     "hm750":["am10","am20","am25","am30"],
+#     "hm1000":["am10","am20","am30","am40"]
+# }
+
 hamap ={
-    "hm125":["am3p6","am5","am6","am7","am8","am9","am10","am11","am12","am13","am14","am15","am16","am17","am18","am19","am20","am21"], #am4 missing in 2018 so left out for now
-    "hm250":["am5","am10","am15","am20"],
-    "hm500":["am5","am10","am15","am20"],
-    "hm750":["am10","am20","am25","am30"],
-    "hm1000":["am10","am20","am30","am40"]
+    "hm125":["am10"] #am4 missing in 2018 so left out for now
+    #"hm250":["am5","am10","am15","am20"],
+    #"hm500":["am5","am10","am15","am20"],
+    #"hm750":["am10","am20","am25","am30"],
+    #"hm1000":["am10","am20","am30","am40"]
 }
+
 
 regions = ["signalRegion", "sideBand"]
 
@@ -61,7 +76,7 @@ for y in years:
                     globals()["eventWeight" + a + r].setVal(event.eventWeight_et*scale*lumi_map[y]*hXsecmap[h])
                     globals()["dataColl" + a + r].add(ROOT.RooArgSet(globals()["dimuMass" + a + r], globals()["visFourbodyMass" + a + r], globals()["eventWeight" + a + r]))
 
-                globals()["fout"+ a + r]=ROOT.TFile(outDir+y+"/signalMC/"+"Haa_MC_"+h+"_"+a+"_"+"TauETauHad"+"_"+y+"_"+"MVAMedium"+"_"+r+"_"+"nominal.root","RECREATE")
+                globals()["fout"+ a + r]=ROOT.TFile(outDir+y+"/SignalMC/"+"Haa_MC_"+h+"_"+a+"_"+"TauETauHad"+"_"+y+"_"+"MVAMedium"+"_"+r+"_"+"nominal.root","RECREATE")
                 print outDir+y+"/signalMC/"+"Haa_MC_"+h+"_"+a+"_"+"TauETauHad"+"_"+y+"_"+"MVAMedium"+"_"+r+"_"+"nominal.root"
                 globals()["dataColl" + a + r].Write()
                 globals()["fout"+ a + r].Close()

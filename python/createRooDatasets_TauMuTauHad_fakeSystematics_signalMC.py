@@ -3,12 +3,15 @@ import ROOT
 from ROOT import RooFit
 
 baseDir="/afs/cern.ch/work/r/rhabibul/FlatTreeProductionRunII/CMSSW_10_6_24/src/MuMuTauTauAnalyzer/flattrees/signalMC/"
-outDir="/eos/cms/store/user/rhabibul/BoostedRooDatasets/TauMuTauHad/"
+outDir="/eos/cms/store/user/rhabibul/BoostedRooDatasets/TauMuTauHad_Order2/"
 
 scale =0.001
 higgs_SM_xsec=48.58
 higgs_BSM_xsec=0.0363647
 
+fakerateUncertainty=0.20
+scaleUp=1.0+fakerateUncertainty
+scaleDown=1.0-fakerateUncertainty
 
 
 years=["2016","2017","2018"]
@@ -41,6 +44,7 @@ regions = ["signalRegion", "sideBand"]
 
 
 
+
 for y in years:
     for h in mh:
         for ia,a in enumerate(hamap[h]):
@@ -54,18 +58,35 @@ for y in years:
                 globals()["visFourbodyMass" + a + r] = ROOT.RooRealVar("visFourbodyMass", "visFourbodyMass", 0, 1000)
                 globals()["eventWeight" + a + r] = ROOT.RooRealVar("eventWeight", "eventWeight", -1, 1)
                 globals()["dataColl" + a + r] = ROOT.RooDataSet("dataColl", "dataColl", ROOT.RooArgSet(globals()["dimuMass" + a + r], globals()["visFourbodyMass" + a + r], globals()["eventWeight" + a + r]))
-
+                print "fakeUp"
                 for event in globals()["treein" + a + r]:
                     if event.mu2Pt_mt > event.mu3Pt_mt:
                         globals()["dimuMass" + a + r].setVal(event.invMassMu1Mu2_mt)
                         globals()["visFourbodyMass" + a + r].setVal(event.visMass3MuTau_mt)
-                        globals()["eventWeight" + a + r].setVal(event.eventWeight_mt*scale*lumi_map[y]*hXsecmap[h])
+                        globals()["eventWeight" + a + r].setVal(event.eventWeight_mt*scale*lumi_map[y]*hXsecmap[h]*scaleUp)
                         globals()["dataColl" + a + r].add(ROOT.RooArgSet(globals()["dimuMass" + a + r], globals()["visFourbodyMass" + a + r], globals()["eventWeight" + a + r]))
 
-                globals()["fout"+ a + r]=ROOT.TFile(outDir+y+"/SignalMC/"+"Haa_MC_"+h+"_"+a+"_"+"TauMuTauHad"+"_"+y+"_"+"MVAMedium"+"_"+r+"_"+"nominal.root","RECREATE")
-                print outDir+y+"/signalMC/"+"Haa_MC_"+h+"_"+a+"_"+"TauMuTauHad"+"_"+y+"_"+"MVAMedium"+"_"+r+"_"+"nominal.root"
+                globals()["foutUp"+ a + r]=ROOT.TFile(outDir+y+"/SignalMC/"+"Haa_MC_"+h+"_"+a+"_"+"TauMuTauHad_Order2"+"_"+y+"_"+"MVAMedium"+"_"+r+"_"+"fakeUp.root","RECREATE")
+                print outDir+y+"/signalMC/"+"Haa_MC_"+h+"_"+a+"_"+"TauMuTauHad_Order2"+"_"+y+"_"+"MVAMedium"+"_"+r+"_"+"fakeUp.root"
                 globals()["dataColl" + a + r].Write()
-                globals()["fout"+ a + r].Close()
+                globals()["foutUp"+ a + r].Close()
+                
+                for event in globals()["treein" + a + r]:
+                    if event.mu2Pt_mt > event.mu3Pt_mt:
+                        globals()["dimuMass" + a + r].setVal(event.invMassMu1Mu2_mt)
+                        globals()["visFourbodyMass" + a + r].setVal(event.visMass3MuTau_mt)
+                        globals()["eventWeight" + a + r].setVal(event.eventWeight_mt*scale*lumi_map[y]*hXsecmap[h]*scaleDown)
+                        globals()["dataColl" + a + r].add(ROOT.RooArgSet(globals()["dimuMass" + a + r], globals()["visFourbodyMass" + a + r], globals()["eventWeight" + a + r]))
+
+                globals()["foutDown"+ a + r]=ROOT.TFile(outDir+y+"/SignalMC/"+"Haa_MC_"+h+"_"+a+"_"+"TauMuTauHad_Order2"+"_"+y+"_"+"MVAMedium"+"_"+r+"_"+"fakeDown.root","RECREATE")
+                print outDir+y+"/signalMC/"+"Haa_MC_"+h+"_"+a+"_"+"TauMuTauHad_Order2"+"_"+y+"_"+"MVAMedium"+"_"+r+"_"+"fakeDown.root"
+                globals()["dataColl" + a + r].Write()
+                globals()["foutDown"+ a + r].Close()
+
+
+
+
+
 exit()
 
 

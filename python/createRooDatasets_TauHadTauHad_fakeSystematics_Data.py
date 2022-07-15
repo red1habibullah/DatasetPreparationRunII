@@ -2,110 +2,135 @@
 import ROOT
 from ROOT import RooFit
 
-fakeDir='/eos/uscms/store/user/zfwd666/2017/bkgEffCheck/TauHadTauHad/'
 
-fileinDir = "/eos/uscms/store/user/zfwd666/2017/bkgEffCheck/TauHadTauHad/"
 
-outputDir="/eos/uscms/store/user/rhabibul/HtoAA/HtoAA2017Deep/TauHadTauHad/RooDatasets/DataDrivenSystematics/"
+fakebaseDir='/afs/cern.ch/user/r/rhabibul/DatasetPrepRunII_Boosted/CMSSW_10_2_13/src/DatasetPreparationRunII/data/'
+baseDir = "/afs/cern.ch/work/r/rhabibul/FlatTreeProductionRunII/CMSSW_10_6_24/src/MuMuTauTauAnalyzer/flattrees/dataSideband/"
+outputDir= "/eos/cms/store/user/rhabibul/BoostedRooDatasets/TauHadTauHad_Partial/"
+
+#'/eos/uscms/store/user/rhabibul/HtoAA/HtoAA2017Deep/TauETauHad/RooDataSets/DataSystematics/'
+years=["2016","2017","2018"]
+disc=["DeepDiTauDCM=0.7;1"]
+
+dmodematch={
+    "decayMode0":0.0,
+    "decayMode1":1.0,
+    "decayMode10":10.0
+}
+
 fakeRateUncertainty=0.2
 scaleUp=1.0+fakeRateUncertainty
 scaleDown = 1.0- fakeRateUncertainty
 
-#TauMuTauHad_sideBand_looseDeepVSjet.root             
-#TauMuTauHad_signalRegion_looseDeepVSjet.root
-
-mlDisc= ["0.3","0.4","0.5","0.6","0.7","0.8","0.9"]
 
 
-for i,ifile in enumerate(mlDisc):
-    fin = ROOT.TFile(fileinDir + "deepDiTauRaw_" + ifile +".root")
-    print fin
-    treein = fin.Get("TreeMuMuTauTau")
-
+for iy,y in enumerate(years):
+    print baseDir+y+"/"+"All_"+y+"_sideBand_nominal.root"
+    fin=ROOT.TFile(baseDir+y+"/Histogram/"+"All_"+y+"_sideBand_nominal.root")
+    treein = fin.Get("TreeTauTau")
     invMassMuMu = ROOT.RooRealVar("invMassMuMu", "invMassMuMu", 2.5, 60)
-    visDiTauMass = ROOT.RooRealVar("visDiTauMass", "visDiTauMass", 0, 60)
     visFourbodyMass = ROOT.RooRealVar("visFourbodyMass", "visFourbodyMass", 0, 1000)
     fakeRateEfficiency = ROOT.RooRealVar("fakeRateEfficiency", "fakeRateEfficiency", 0, 1)
     
-    dataColl = ROOT.RooDataSet("dataColl", "dataColl", ROOT.RooArgSet(invMassMuMu, visDiTauMass, visFourbodyMass, fakeRateEfficiency))
-    plotname= "DeepDiTauDCM=" + ifile
-    print plotname
+    dataColl = ROOT.RooDataSet("dataColl", "dataColl", ROOT.RooArgSet(invMassMuMu, visFourbodyMass, fakeRateEfficiency))
+    dataCollNew = ROOT.RooDataSet("dataColl", "dataColl", ROOT.RooArgSet(invMassMuMu, visFourbodyMass, fakeRateEfficiency))
     for event in treein:
-        finFakeEff = ROOT.TFile(fakeDir+"fakeTauEff_TauHadTauHad.root")
-        histFakeEff = ROOT.TH1D()
-        
-        
-        histFakeEff = finFakeEff.Get(plotname)
+        for id,d in enumerate(disc): 
+            finFakeEff = ROOT.TFile(fakebaseDir+y+"/"+"fakeTauEff_TauHadTauHad.root")
+            histFakeEff = ROOT.TH1D()
+            histFakeEff = finFakeEff.Get(d)
+            #print "got histfake"
+            nbins = histFakeEff.GetNbinsX()
+             
+            for ibin in xrange(nbins):
+                binlowEdge = histFakeEff.GetXaxis().GetBinLowEdge(ibin+1)
+                binhighEdge = histFakeEff.GetXaxis().GetBinLowEdge(ibin+1) + histFakeEff.GetXaxis().GetBinWidth(ibin+1)
+                #print "binlowEdge: ",binlowEdge
+                #print "binhighEdge: ",binhighEdge
+                #print "============="
+                #print "tau pt: ",event.tauPt_tt
+                #print "decayMode from tau in event ",event.tauDM_mt
+                #print "decayMode from file ",dmodematch[d]
+                #if (event.tauPt_tt >= binlowEdge and event.tauPt_tt < binhighEdge):
+                if (event.tauPt_tt >= binlowEdge and event.tauPt_tt < binhighEdge):
+                    print "***match***"
+                    fakeRateEfficiency.setVal(histFakeEff.GetBinContent(ibin+1)*scaleUp)
+                    #print "nominal",histFakeEff.GetBinContent(ibin+1)
+                    #print "fakeUp",histFakeEff.GetBinContent(ibin+1)*scaleUp
+                # else:
+                #     print "unmatch- skip"                 
+            if event.tauDisc_tt > 0.6:
+                invMassMuMu.setVal(event.invMassMu1Mu2_tt)
+                visFourbodyMass.setVal(event.visMass2Mu2Tau_tt)
+                dataColl.add(ROOT.RooArgSet(invMassMuMu, visFourbodyMass, fakeRateEfficiency))
 
-        nbins = histFakeEff.GetNbinsX()
-        for ibin in xrange(nbins):
-            binlowEdge = histFakeEff.GetXaxis().GetBinLowEdge(ibin+1)
-            binhighEdge = histFakeEff.GetXaxis().GetBinLowEdge(ibin+1) + histFakeEff.GetXaxis().GetBinWidth(ibin+1)
-            if (event.Tau2Pt >= binlowEdge and event.Tau2Pt < binhighEdge):
-                fakeRateEfficiency.setVal(histFakeEff.GetBinContent(ibin+1))
 
-        invMassMuMu.setVal(event.invMassMuMu)
-        visDiTauMass.setVal(event.visMassTauTau)
-        visFourbodyMass.setVal(event.visMassMuMuTauTau)
-        dataColl.add(ROOT.RooArgSet(invMassMuMu, visDiTauMass, visFourbodyMass, fakeRateEfficiency))
 
-    fout = ROOT.TFile(outputDir+"TauHadTauHad" + "_"+ "signalRegion"+"_"+ifile + ".root", "RECREATE")
+
+
+    foutUp = ROOT.TFile(outputDir+y+"/"+"DataDriven/"+"TauHadTauHad_Partial" + "_"+y+"_MVAMedium_" +"signalRegion_fakeUp.root", "RECREATE")
     dataColl.Write()
-    fout.Close()
-    
-    foutcopy= ROOT.TFile(outputDir+"TauHadTauHad" + "_"+ "sideBand"+"_"+ifile + ".root", "RECREATE")
-    dataColl.Write()
-    foutcopy.Close()
-
-    
-    for event in treein:
-        finFakeEff = ROOT.TFile(fakeDir+"fakeTauEff_TauHadTauHad.root")
-        histFakeEff = ROOT.TH1D()
-        histFakeEff = finFakeEff.Get(plotname)
-
-        nbins = histFakeEff.GetNbinsX()
-        for ibin in xrange(nbins):
-            binlowEdge = histFakeEff.GetXaxis().GetBinLowEdge(ibin+1)
-            binhighEdge = histFakeEff.GetXaxis().GetBinLowEdge(ibin+1) + histFakeEff.GetXaxis().GetBinWidth(ibin+1)
-            if (event.Tau2Pt >= binlowEdge and event.Tau2Pt < binhighEdge):
-                fakeRateEfficiency.setVal(histFakeEff.GetBinContent(ibin+1)*scaleUp)
-                
-        invMassMuMu.setVal(event.invMassMuMu)
-        visDiTauMass.setVal(event.visMassTauTau)
-        visFourbodyMass.setVal(event.visMassMuMuTauTau)
-        dataColl.add(ROOT.RooArgSet(invMassMuMu, visDiTauMass, visFourbodyMass, fakeRateEfficiency))
-    foutUp =  ROOT.TFile(outputDir+"TauHadTauHad" + "_"+ "signalRegion"+"_"+ifile +"_" + "fakeUp" + ".root", "RECREATE")
-    dataColl.Write()
+    print "Up",dataColl.sumEntries()
     foutUp.Close()
     
-    foutUpcopy =  ROOT.TFile(outputDir+"TauHadTauHad" + "_"+ "sideBand"+"_"+ifile +"_" + "fakeUp" + ".root", "RECREATE")
+    foutcopyUp = ROOT.TFile(outputDir+y+"/"+"DataDriven/"+"TauHadTauHad_Partial" + "_"+y+"_MVAMedium_" +"sideBand_fakeUp.root", "RECREATE")
     dataColl.Write()
-    foutUpcopy.Close()
-    
-    
+    foutcopyUp.Close()
+    print "done Up!"
+
     for event in treein:
-        finFakeEff = ROOT.TFile(fakeDir+"fakeTauEff_TauHadTauHad.root")
-        histFakeEff = ROOT.TH1D()
-        histFakeEff = finFakeEff.Get(plotname)
+        for id,d in enumerate(disc):
+            finFakeEff = ROOT.TFile(fakebaseDir+y+"/"+"fakeTauEff_TauHadTauHad.root")
+            histFakeEff = ROOT.TH1D()
+            histFakeEff = finFakeEff.Get(d)
+            #print "got histfake"                                                                                                     
+            nbins = histFakeEff.GetNbinsX()
 
-        nbins = histFakeEff.GetNbinsX()
-        for ibin in xrange(nbins):
-            binlowEdge = histFakeEff.GetXaxis().GetBinLowEdge(ibin+1)
-            binhighEdge = histFakeEff.GetXaxis().GetBinLowEdge(ibin+1) + histFakeEff.GetXaxis().GetBinWidth(ibin+1)
-            if (event.Tau2Pt >= binlowEdge and event.Tau2Pt < binhighEdge):
-                fakeRateEfficiency.setVal(histFakeEff.GetBinContent(ibin+1)*scaleDown)
+            for ibin in xrange(nbins):
+                binlowEdge = histFakeEff.GetXaxis().GetBinLowEdge(ibin+1)
+                binhighEdge = histFakeEff.GetXaxis().GetBinLowEdge(ibin+1) + histFakeEff.GetXaxis().GetBinWidth(ibin+1)
+                #print "decayMode from tau in event ",event.tauDM_mt                                                                  
+                #print "decayMode from file ",dmodematch[d]                                                                           
+                #print "binlowEdge: ",binlowEdge
+                #print "binhighEdge: ",binhighEdge
+                #print "============="
+                #print "tau pt: ",event.tauPt_tt
+                #if (event.tauPt_tt >= binlowEdge and event.tauPt_tt < binhighEdge):
+                if ( event.tauPt_tt >= binlowEdge and event.tauPt_tt < binhighEdge):
+                    fakeRateEfficiency.setVal(histFakeEff.GetBinContent(ibin+1)*scaleDown)
+                    #print "nominal",histFakeEff.GetBinContent(ibin+1)
+                    #print "fakeUp",histFakeEff.GetBinContent(ibin+1)*scaleDown
 
-        invMassMuMu.setVal(event.invMassMuMu)
-        visDiTauMass.setVal(event.visMassTauTau)
-        visFourbodyMass.setVal(event.visMassMuMuTauTau)
-        dataColl.add(ROOT.RooArgSet(invMassMuMu, visDiTauMass, visFourbodyMass, fakeRateEfficiency))
-    foutDown =  ROOT.TFile(outputDir+"TauHadTauHad" + "_"+ "signalRegion"+"_"+ifile +"_" + "fakeDown" + ".root", "RECREATE")
-    dataColl.Write()
-    foutDown.Close()
+                # else:                                                                                                               
+                #     print "unmatch- skip"                                                                                           
+        #if event.mu1Pt_mt > event.mu3Pt_mt:                                                                                        
+        if event.tauDisc_tt > 0.6:
+            print "lala"
+            invMassMuMu.setVal(event.invMassMu1Mu2_tt)
+            visFourbodyMass.setVal(event.visMass2Mu2Tau_tt)
+            dataCollNew.add(ROOT.RooArgSet(invMassMuMu, visFourbodyMass, fakeRateEfficiency))
 
-    foutDowncopy =  ROOT.TFile(outputDir+"TauHadTauHad" + "_"+ "sideBand"+"_"+ifile +"_" + "fakeDown" + ".root", "RECREATE")
-    dataColl.Write()
-    foutDowncopy.Close()
+
+
+
+
+    foutUp = ROOT.TFile(outputDir+y+"/"+"DataDriven/"+"TauHadTauHad_Partial" + "_"+y+"_MVAMedium_" +"signalRegion_fakeDown.root", "RECREATE")
+    dataCollNew.Write()
+    print "Down",dataCollNew.sumEntries()
+    foutUp.Close()
+
+    foutcopyUp = ROOT.TFile(outputDir+y+"/"+"DataDriven/"+"TauHadTauHad_Partial" + "_"+y+"_MVAMedium_" +"sideBand_fakeDown.root", "RECREATE")
+    dataCollNew.Write()
+    foutcopyUp.Close()
+    print "done Down!"
+
+
+
+
+
+
+
+exit()
 
 
 

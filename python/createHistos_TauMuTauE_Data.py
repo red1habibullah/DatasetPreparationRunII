@@ -40,13 +40,15 @@ label3.SetTextFont(52)
 label3.SetTextSize(0.03)
 
 baseDir='/afs/cern.ch/work/r/rhabibul/FlatTreeProductionRunII/CMSSW_10_6_24/src/MuMuTauTauAnalyzer/flattrees/dataSideband/'
-outputDir='/eos/cms/store/user/rhabibul/BoostedRooDatasets/TauMuTauE/'
+#outputDir='/eos/cms/store/user/rhabibul/BoostedRooDatasets/TauMuTauE_Order_Scale/'
+outputDir='/eos/cms/store/user/rhabibul/BoostedRooDatasets/TauMuTauE_Rebin/'
 fakebaseDir='/afs/cern.ch/user/r/rhabibul/DatasetPrepRunII_Boosted/CMSSW_10_2_13/src/DatasetPreparationRunII/data/'
 
 #inputFakeEleFile = ROOT.TFile(fakebaseDir+"fakeTauEff_TauETauE.root")
 #inputFakeMuFile = ROOT.TFile(fakebaseDir+"fakeTauEff_TauMuTauMu.root")
-nbins = 240
-nbinsy = 200
+#nbins = 240
+nbins = 480
+nbinsy = 400
 
 for j,imuid in enumerate(muIdList):
 
@@ -135,7 +137,7 @@ for j,imuid in enumerate(muIdList):
                 for ibin in xrange(nbins):
                     binlowEdge = histFakeEleEff.GetXaxis().GetBinLowEdge(ibin+1)
                     binhighEdge = histFakeEleEff.GetXaxis().GetBinLowEdge(ibin+1) + histFakeEleEff.GetXaxis().GetBinWidth(ibin+1)
-                    if (event.elePt_me >= binlowEdge and event.elePt_me < binhighEdge):
+                    if (event.elePt_me >= binlowEdge and event.elePt_me < binhighEdge and event.mu2Pt_me > event.mu3Pt_me):
                         fakeEff = histFakeEleEff.GetBinContent(ibin+1)/(1.0-histFakeEleEff.GetBinContent(ibin+1))
                 globals()["data3P1F1Hist" + str(j) + str(k)+str(iy)].Fill(event.invMassMu1Mu2_me, fakeEff)
                 globals()["2Ddata3P1F1Hist" + str(j) + str(k)+str(iy)].Fill(event.invMassMu1Mu2_me, event.visMass3MuEle_me, fakeEff)
@@ -148,7 +150,7 @@ for j,imuid in enumerate(muIdList):
                 for ibin in xrange(nbins):
                     binlowEdge = histFakeMuEff.GetXaxis().GetBinLowEdge(ibin+1)
                     binhighEdge = histFakeMuEff.GetXaxis().GetBinLowEdge(ibin+1) + histFakeMuEff.GetXaxis().GetBinWidth(ibin+1)
-                    if (event.mu3Pt_me >= binlowEdge and event.mu3Pt_me < binhighEdge):
+                    if (event.mu3Pt_me >= binlowEdge and event.mu3Pt_me < binhighEdge and event.mu2Pt_me > event.mu3Pt_me):
                         fakeEff = histFakeMuEff.GetBinContent(ibin+1)/(1.0-histFakeMuEff.GetBinContent(ibin+1))
 
                     
@@ -175,13 +177,12 @@ for j,imuid in enumerate(muIdList):
                 for ibin in xrange(nbinsMu):
                     binlowEdge = histFakeMuEff.GetXaxis().GetBinLowEdge(ibin+1)
                     binhighEdge = histFakeMuEff.GetXaxis().GetBinLowEdge(ibin+1) + histFakeMuEff.GetXaxis().GetBinWidth(ibin+1)
-                    if (event.mu3Pt_me >= binlowEdge and event.mu3Pt_me < binhighEdge):
+                    if (event.mu3Pt_me >= binlowEdge and event.mu3Pt_me < binhighEdge and event.mu2Pt_me > event.mu3Pt_me):
                         fakeEff1 = histFakeMuEff.GetBinContent(ibin+1)/(1.0-histFakeMuEff.GetBinContent(ibin+1))
-
                 for ibin in xrange(nbinsEle):
                     binlowEdge = histFakeEleEff.GetXaxis().GetBinLowEdge(ibin+1)
                     binhighEdge = histFakeEleEff.GetXaxis().GetBinLowEdge(ibin+1) + histFakeEleEff.GetXaxis().GetBinWidth(ibin+1)
-                    if (event.elePt_me >= binlowEdge and event.elePt_me < binhighEdge):
+                    if (event.elePt_me >= binlowEdge and event.elePt_me < binhighEdge and event.mu2Pt_me > event.mu3Pt_me):
                         fakeEff2 = histFakeEleEff.GetBinContent(ibin+1)/(1.0-histFakeEleEff.GetBinContent(ibin+1))
                         fakeEff = histFakeEleEff.GetBinContent(ibin+1)/(1.0-histFakeEleEff.GetBinContent(ibin+1))
 
@@ -205,13 +206,13 @@ for j,imuid in enumerate(muIdList):
                 for ibin in xrange(nbinsMu):
                     binlowEdge = histFakeMuEff.GetXaxis().GetBinLowEdge(ibin+1)
                     binhighEdge = histFakeMuEff.GetXaxis().GetBinLowEdge(ibin+1) + histFakeMuEff.GetXaxis().GetBinWidth(ibin+1)
-                    if (event.mu3Pt_me >= binlowEdge and event.mu3Pt_me < binhighEdge):
+                    if (event.mu3Pt_me >= binlowEdge and event.mu3Pt_me < binhighEdge and event.mu2Pt_me > event.mu3Pt_me):
                         fakeEff1 = histFakeMuEff.GetBinContent(ibin+1)/(1.0-histFakeMuEff.GetBinContent(ibin+1))
 
                 for ibin in xrange(nbinsEle):
                     binlowEdge = histFakeEleEff.GetXaxis().GetBinLowEdge(ibin+1)
                     binhighEdge = histFakeEleEff.GetXaxis().GetBinLowEdge(ibin+1) + histFakeEleEff.GetXaxis().GetBinWidth(ibin+1)
-                    if (event.elePt_me >= binlowEdge and event.elePt_me < binhighEdge):
+                    if (event.elePt_me >= binlowEdge and event.elePt_me < binhighEdge and event.mu2Pt_me > event.mu3Pt_me):
                         fakeEff2 = histFakeEleEff.GetBinContent(ibin+1)/(1.0-histFakeEleEff.GetBinContent(ibin+1))
                 
             
@@ -235,6 +236,8 @@ for j,imuid in enumerate(muIdList):
             #globals()["data3P1F1HistOnly" + str(j) + str(k)].Add(globals()["data2P2FHist" + str(j) + str(k)], -1)
 
             nbins = globals()["data3P1F1Hist" + str(j) + str(k)+str(iy)].GetNbinsX()
+            Integral_pre_zero= globals()["data3P1F1Hist" + str(j) + str(k)+str(iy)].Integral()
+            print "integral before: ",Integral_pre_zero
             for ibin in xrange(nbins):
                 binValue = globals()["data3P1F1Hist" + str(j) + str(k)+str(iy)].GetBinContent(ibin+1)
                 if binValue < 0:
@@ -242,9 +245,17 @@ for j,imuid in enumerate(muIdList):
                     globals()["data3P1F1Hist" + str(j) + str(k)+str(iy)].SetBinContent(ibin+1, 0)  
                     binval = globals()["data3P1F1Hist" + str(j) + str(k)+str(iy)].GetBinContent(ibin+1)
                     #print " ###### changed bins: ", binval
-            
+            Integral_post_zero= globals()["data3P1F1Hist" + str(j) + str(k)+str(iy)].Integral()
+            print "integral after: ",Integral_post_zero
+            globals()["data3P1F1Hist" + str(j) + str(k)+str(iy)].Scale(Integral_post_zero/Integral_pre_zero)
+
+
             nbinsX = globals()["2Ddata3P1F1Hist" + str(j) + str(k)+str(iy)].GetNbinsX()
             nbinsY = globals()["2Ddata3P1F1Hist" + str(j) + str(k)+str(iy)].GetNbinsY()
+            Integral_pre_zero_2D= globals()["2Ddata3P1F1Hist" + str(j) + str(k)+str(iy)].Integral()
+            
+            print "integral before 2D: ",Integral_pre_zero_2D
+           
             for ibinx in xrange(nbinsX):
                 for ibiny in xrange(nbinsY):
                     #binValue1 = globals()["data3P1F1Hist" + str(j) + str(k)].GetBinContent(ibin+1)
@@ -254,13 +265,16 @@ for j,imuid in enumerate(muIdList):
                         print "***** negative bins: ", ibinx+1, ibiny+1, binValue
                         globals()["2Ddata3P1F1Hist" + str(j) + str(k)+str(iy)].SetBinContent(ibinx+1, ibiny+1, 0)
                         globals()["2Ddata3P1F1Hist" + str(j) + str(k)+str(iy)].SetBinError(ibinx+1, ibiny+1, 0)
-                #binval = globals()["data3P1F1Hist" + str(j) + str(k)].GetBinContent(ibin+1)
+            #binval = globals()["data3P1F1Hist" + str(j) + str(k)].GetBinContent(ibin+1)
+            Integral_post_zero_2D= globals()["2Ddata3P1F1Hist" + str(j) + str(k)+str(iy)].Integral()
+            print "integral after 2D: ",Integral_post_zero_2D
+            globals()["2Ddata3P1F1Hist" + str(j) + str(k)+str(iy)].Scale(Integral_post_zero_2D/Integral_pre_zero_2D)
+            
 
 
 
-
-            globals()["fout1" + str(j) + str(k)+str(iy) ] = ROOT.TFile(outputDir+y+"/"+"DataDriven/"+"TauMuTauE_" +y+"_"+muIdLabel[j]+"_"+eleIdLabel[k]+"_"+ "sideBand" +"_"+"nominal"+ ".root", "RECREATE")
-            globals()["fout2" + str(j) + str(k)+str(iy) ] = ROOT.TFile(outputDir+y+"/"+"DataDriven/"+"TauMuTauE_" +y+"_"+muIdLabel[j]+"_"+eleIdLabel[k]+"_"+ "siginalRegion" +"_"+"nominal"+ ".root", "RECREATE")
+            globals()["fout1" + str(j) + str(k)+str(iy) ] = ROOT.TFile(outputDir+y+"/"+"DataDriven/"+"TauMuTauE_Rebin_" +y+"_"+muIdLabel[j]+"_"+eleIdLabel[k]+"_"+ "sideBand" +"_"+"nominal"+ ".root", "RECREATE")
+            globals()["fout2" + str(j) + str(k)+str(iy) ] = ROOT.TFile(outputDir+y+"/"+"DataDriven/"+"TauMuTauE_Rebin_" +y+"_"+muIdLabel[j]+"_"+eleIdLabel[k]+"_"+ "signalRegion" +"_"+"nominal"+ ".root", "RECREATE")
             
 
             globals()["fout1" + str(j) + str(k) +str(iy)].cd()

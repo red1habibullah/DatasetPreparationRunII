@@ -3,16 +3,12 @@ import ROOT
 from ROOT import RooFit
 
 
-
-
-
-
 fakebaseDir='/afs/cern.ch/user/r/rhabibul/DatasetPrepRunII_Boosted/CMSSW_10_2_13/src/DatasetPreparationRunII/data/'
 baseDir = "/afs/cern.ch/work/r/rhabibul/FlatTreeProductionRunII/CMSSW_10_6_24/src/MuMuTauTauAnalyzer/flattrees/dataSideband/"
-outputDir= "/eos/cms/store/user/rhabibul/BoostedRooDatasets/TauMuTauHad_Order2/"
+outputDir= "/eos/cms/store/user/rhabibul/BoostedRooDatasets/TauMuTauHad_No_dR_Mtt/"
 
-#'/eos/uscms/store/user/rhabibul/HtoAA/HtoAA2017Deep/TauETauHad/RooDataSets/DataSystematics/'
-years=["2016","2017","2018"]
+
+years=["2017"]
 dmodes=["decayMode0","decayMode1","decayMode10"]
 
 dmodematch={
@@ -21,14 +17,10 @@ dmodematch={
     "decayMode10":10.0
 }
 
-#fakeRateUncertainty=0.2
-#scaleUp=1.0+fakeRateUncertainty
-#scaleDown = 1.0- fakeRateUncertainty
-
 
 for iy,y in enumerate(years):
     print baseDir+y+"/"+"All_"+y+"_sideBand_nominal.root"
-    fin=ROOT.TFile(baseDir+y+"/Histogram/"+"All_"+y+"_sideBand_nominal.root")
+    fin=ROOT.TFile(baseDir+y+"/Histogram/"+"All_"+y+"_sideBand_nominal_dR.root")
     treein = fin.Get("TreeMuTau")
     invMassMuMu = ROOT.RooRealVar("invMassMuMu", "invMassMuMu", 2.5, 60)
     visFourbodyMass = ROOT.RooRealVar("visFourbodyMass", "visFourbodyMass", 0, 1000)
@@ -53,20 +45,19 @@ for iy,y in enumerate(years):
                     fakeRateEfficiency.setVal(histFakeEff.GetBinContent(ibin+1))
                 # else:
                 #     print "unmatch- skip"                 
-        if event.mu2Pt_mt > event.mu3Pt_mt:
-            invMassMuMu.setVal(event.invMassMu1Mu2_mt)
-            visFourbodyMass.setVal(event.visMass3MuTau_mt)
-            dataColl.add(ROOT.RooArgSet(invMassMuMu, visFourbodyMass, fakeRateEfficiency))
-            
-    
+        invMassMuMu.setVal(event.invMassMu1Mu2_mt)
+        visFourbodyMass.setVal(event.visMass3MuTau_mt)
+        dataColl.add(ROOT.RooArgSet(invMassMuMu, visFourbodyMass, fakeRateEfficiency))
 
 
 
-    fout = ROOT.TFile(outputDir+y+"/"+"DataDriven/"+"TauMuTauHad_Order2" + "_"+y+"_MVAMedium_" +"signalRegion__nominal.root", "RECREATE")
+
+
+    fout = ROOT.TFile(outputDir+y+"/"+"DataDriven/"+"TauMuTauHad_No_dR_Mtt" + "_"+y+"_MVAMedium_" +"signalRegion_nominal.root", "RECREATE")
     dataColl.Write()
     fout.Close()
     
-    foutcopy = ROOT.TFile(outputDir+y+"/"+"DataDriven/"+"TauMuTauHad_Order2" + "_"+y+"_MVAMedium_" +"sideBand_nominal.root", "RECREATE")
+    foutcopy = ROOT.TFile(outputDir+y+"/"+"DataDriven/"+"TauMuTauHad_No_dR_Mtt" + "_"+y+"_MVAMedium_" +"sideBand_nominal.root", "RECREATE")
     dataColl.Write()
     foutcopy.Close()
    
@@ -74,10 +65,6 @@ for iy,y in enumerate(years):
 
 
 
-
-
-
-exit()
 
 
 
