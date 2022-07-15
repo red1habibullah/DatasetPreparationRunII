@@ -1,5 +1,5 @@
 # DatasetPreparationRunII
-Each channel has a separate script and for each channel there is running od Data, SignalMC, with fakeSystematics,tauScaleSystematics oR JEC Systematics.
+Each channel has a separate script and for each channel there is running of Data, SignalMC, with fakeSystematics,tauScaleSystematics or JEC Systematics.
 
 For each scripts, one needs to change the following directories to make the code work:
 
